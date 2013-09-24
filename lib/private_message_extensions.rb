@@ -26,9 +26,8 @@ module Professionalnerd # :nodoc:
             extend ClassMethods 
             include InstanceMethods 
           end 
-
-          scope :already_read, :conditions => "read_at IS NOT NULL"
-          scope :unread, :conditions => "read_at IS NULL"
+          scope :already_read -> { where("read_at IS NOT NULL") }
+          scope :unread -> { where("read_at IS NULL") }
         end 
       end 
 
@@ -68,3 +67,4 @@ if defined? ActiveRecord
     include Professionalnerd::SimplePrivateMessages::PrivateMessageExtensions
   end
 end
+
