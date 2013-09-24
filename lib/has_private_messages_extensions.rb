@@ -19,8 +19,7 @@ module Professionalnerd #:nodoc:
             
             has_many :sent_messages,
                      -> { 
-                       extending(options[:class_name].constantize)
-                         .includes(:recipient)
+                       includes(:recipient)
                          .where(sender_deleted: false)
                          .order(:created_at) 
                      },
@@ -29,8 +28,7 @@ module Professionalnerd #:nodoc:
 
             has_many :received_messages,
                      -> {
-                       extending(options[:class_name].constantize)
-                         .includes(:sender)
+                       includes(:sender)
                          .where(recipient_deleted: false)
                          .order(:created_at)
                      },
