@@ -18,18 +18,24 @@ module Professionalnerd #:nodoc:
             table_name = options[:class_name].constantize.table_name
             
             has_many :sent_messages,
+                     -> { 
+                       extending(options[:class_name].constantize)
+                         .includes(:recipient)
+                         .where(sender_deleted: false)
+                         .order(:created_at) 
+                     },
                      :class_name => options[:class_name],
-                     :foreign_key => 'sender_id',
-                     :include => :recipient,
-                     :order => "#{table_name}.created_at DESC",
-                     :conditions => ["#{table_name}.sender_deleted = ?", false]
+                     :foreign_key => 'sender_id'
 
             has_many :received_messages,
+                     -> {
+                       extending(options[:class_name].constantize)
+                         .includes(:sender)
+                         .where(recipient_deleted: false)
+                         .order(:created_at)
+                     },
                      :class_name => options[:class_name],
-                     :foreign_key => 'recipient_id',
-                     :include => :sender,
-                     :order => "#{table_name}.created_at DESC",
-                     :conditions => ["#{table_name}.recipient_deleted = ?", false]
+                     :foreign_key => 'recipient_id'
 
             extend ClassMethods 
             include InstanceMethods 
@@ -62,3 +68,4 @@ if defined? ActiveRecord
     include Professionalnerd::SimplePrivateMessages::HasPrivateMessagesExtensions
   end
 end
+
