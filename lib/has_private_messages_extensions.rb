@@ -54,7 +54,8 @@ module Professionalnerd #:nodoc:
         
         # Returns the number of unread messages for this user
         def unread_message_count
-          where(recipient_id: self)
+          options[:class_name].constantize
+            .where(recipient_id: self)
             .where(read_at: nil)
             .where(recipient_deleted: false)
             .count
