@@ -34,8 +34,12 @@ module Professionalnerd # :nodoc:
       module ClassMethods
         # Ensures the passed user is either the sender or the recipient then returns the message.
         # If the reader is the recipient and the message has yet not been read, it marks the read_at timestamp.
+        # NOTE: old version used #find, which will throw an exception if
+        # no record's found. using #first! to duplicate that behavior.
         def read_message(id, reader)
-          message = find(id, :conditions => ["sender_id = ? OR recipient_id = ?", reader, reader])
+          message = where(id: id)
+            .where('sender_id = ? or recipient_id = ?', reader, reader)
+            .first!
           if message.read_at.nil? && reader == message.recipient
             message.read_at = Time.now
             message.save!
